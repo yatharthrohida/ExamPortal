@@ -229,35 +229,39 @@ test('Submission Answer Persistence & Exam Submission Suite', async (t) => {
      Route registration sanity checks
      ====================================================================== */
 
-  await t.test('Route: PUT answer route is registered (not 404)', async () => {
-    const { status } = await req('PUT',
+  await t.test('Route: PUT answer route is registered', async () => {
+    const { status, body } = await req('PUT',
       `/api/submissions/${sampleSubmissionId}/answers/${sampleQuestionId}`,
       { token: studentToken, body: { selectedOptionId: null } }
     );
-    assert.notEqual(status, 404, 'PUT answer route must be registered');
+    assert.equal(status, 404);
+    assert.equal(body?.error?.code, 'SUBMISSION_NOT_FOUND');
   });
 
-  await t.test('Route: GET /state route is registered (not 404)', async () => {
-    const { status } = await req('GET',
+  await t.test('Route: GET /state route is registered', async () => {
+    const { status, body } = await req('GET',
       `/api/submissions/${sampleSubmissionId}/state`,
       { token: studentToken }
     );
-    assert.notEqual(status, 404, 'GET /state route must be registered');
+    assert.equal(status, 404);
+    assert.equal(body?.error?.code, 'SUBMISSION_NOT_FOUND');
   });
 
-  await t.test('Route: POST /submit route is registered (not 404)', async () => {
-    const { status } = await req('POST',
+  await t.test('Route: POST /submit route is registered', async () => {
+    const { status, body } = await req('POST',
       `/api/submissions/${sampleSubmissionId}/submit`,
       { token: studentToken, body: {} }
     );
-    assert.notEqual(status, 404, 'POST /submit route must be registered');
+    assert.equal(status, 404);
+    assert.equal(body?.error?.code, 'SUBMISSION_NOT_FOUND');
   });
 
-  await t.test('Route: POST /integrity-event route is registered (not 404)', async () => {
-    const { status } = await req('POST',
+  await t.test('Route: POST /integrity-event route is registered', async () => {
+    const { status, body } = await req('POST',
       `/api/submissions/${sampleSubmissionId}/integrity-event`,
       { token: studentToken, body: { eventType: 'TAB_SWITCH' } }
     );
-    assert.notEqual(status, 404, 'POST /integrity-event route must be registered');
+    assert.equal(status, 404);
+    assert.equal(body?.error?.code, 'SUBMISSION_NOT_FOUND');
   });
 });
