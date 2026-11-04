@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { env } from './config/env.js';
@@ -11,6 +12,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const clientDistDir = path.resolve(__dirname, '../../client/dist');
 const clientDir = path.resolve(__dirname, '../../client');
 
 export function createApp() {
@@ -46,7 +48,11 @@ export function createApp() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Serve frontend static assets from client directory
+  // Serve compiled production frontend if built
+  if (fs.existsSync(clientDistDir)) {
+    app.use(express.static(clientDistDir));
+  }
+  // Serve static assets from client root
   app.use(express.static(clientDir));
   // Backward compatibility alias if old folder URL was opened
   app.use('/Online-Exam-Portal', express.static(clientDir));
@@ -56,6 +62,18 @@ export function createApp() {
 
   // Mount API router
   app.use('/api', apiRouter);
+
+  // SPA fallback for non-API client routes (e.g. /teacher/dashboard, /student/exam)
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    const distIndex = path.join(clientDistDir, 'index.html');
+    if (fs.existsSync(distIndex)) {
+      return res.sendFile(distIndex);
+    }
+    return next();
+  });
 
   // Centralized 404 Handler for undefined API routes or assets
   app.use(notFoundHandler);

@@ -10,6 +10,7 @@
     "migrate": "node scripts/migrate.js",
     "migrate:rollback": "node scripts/migrate.js rollback",
     "migrate:status": "node scripts/migrate.js status",
+    "seed": "node scripts/seed.js",
     "test": "node --test \"tests/**/*.test.js\""
   },
   "keywords": [

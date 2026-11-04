@@ -170,7 +170,19 @@ test('Teacher Exam Management Backend Suite', async (t) => {
     assert.equal(json.error.code, 'CANNOT_PUBLISH_EMPTY_EXAM');
   });
 
-  await t.test('Auth: POST /api/auth/login succeeds with demo credentials', async () => {
+  await t.test('Auth: POST /api/auth/login succeeds with registered credentials', async () => {
+    // Register teacher first to ensure fresh database compatibility
+    await fetch(`${baseUrl}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Dr. Alan Vance',
+        email: 'alan.vance@university.edu',
+        password: 'password123',
+        role: 'TEACHER'
+      })
+    });
+
     const res = await fetch(`${baseUrl}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -188,4 +200,3 @@ test('Teacher Exam Management Backend Suite', async (t) => {
     assert.equal(json.data.user.role, 'TEACHER');
   });
 });
-

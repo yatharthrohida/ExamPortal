@@ -1,0 +1,17 @@
+{
+  "name": "exam-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ExamPortal Enterprise Online Examination & Assessment System",
+  "type": "module",
+  "scripts": {
+    "start": "node start-dev.js",
+    "dev": "node start-dev.js",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "seed": "npm --prefix server run seed",
+    "test": "npm --prefix server test"
+  }
+}
+

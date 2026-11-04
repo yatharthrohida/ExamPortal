@@ -7,7 +7,13 @@ import {
   publishExam,
   archiveExam,
   getExamSummary,
-  getExamByAccessCode
+  getExamByAccessCode,
+  getAvailableExams,
+  getExamInstructions,
+  startExam,
+  parseDocument,
+  deleteExam,
+  getExamAnalytics
 } from '../controllers/examController.js';
 import {
   getExamQuestions,
@@ -21,51 +27,43 @@ import { verifyAuth, requireRole } from '../middleware/auth.js';
 
 export const examRouter = Router();
 
-// Public / Student Lookup Endpoint
+// Public / Student Assessment Discovery & Ingestion
+examRouter.get('/available', getAvailableExams);
 examRouter.get('/code/:code', getExamByAccessCode);
+examRouter.get('/:id/instructions', getExamInstructions);
+examRouter.post('/:id/start', verifyAuth, startExam);
 
 // Teacher Exam Management Endpoints (Require TEACHER or ADMIN)
 const teacherOnly = [verifyAuth, requireRole('TEACHER', 'ADMIN')];
 
-// --- Core Exam Endpoints ---
-// GET /api/exams/mine - list teacher's exams
+// Document parsing & question staging
+examRouter.post('/parse-document', ...teacherOnly, parseDocument);
+
+// Teacher's exams (support both /mine and /teacher for frontend compatibility)
 examRouter.get('/mine', ...teacherOnly, getMyExams);
+examRouter.get('/teacher', ...teacherOnly, getMyExams);
 
-// POST /api/exams - create a draft exam
+// Core CRUD Endpoints
 examRouter.post('/', ...teacherOnly, createExam);
-
-// GET /api/exams/:id - get single exam details
 examRouter.get('/:id', ...teacherOnly, getExamById);
-
-// PATCH /api/exams/:id - update a draft
 examRouter.patch('/:id', ...teacherOnly, updateExam);
+examRouter.delete('/:id', ...teacherOnly, deleteExam);
 
-// POST /api/exams/:id/publish - validate and publish
+// Publishing Workflow (support both PUT and POST)
 examRouter.post('/:id/publish', ...teacherOnly, publishExam);
-
-// POST /api/exams/:id/unpublish - revert to DRAFT if 0 attempts
+examRouter.put('/:id/publish', ...teacherOnly, publishExam);
 examRouter.post('/:id/unpublish', ...teacherOnly, unpublishExam);
-
-// POST /api/exams/:id/archive - archive an exam
 examRouter.post('/:id/archive', ...teacherOnly, archiveExam);
 
-// GET /api/exams/:id/summary - teacher-facing analytics & submission summary
+// Analytics & Reports
 examRouter.get('/:id/summary', ...teacherOnly, getExamSummary);
+examRouter.get('/:id/analytics', ...teacherOnly, getExamAnalytics);
 
-// --- Question Management Endpoints (Teacher Drafts) ---
-// GET /api/exams/:examId/questions - list questions including correct answer & explanation
+// Question Management Endpoints (Teacher Drafts)
 examRouter.get('/:examId/questions', ...teacherOnly, getExamQuestions);
-
-// POST /api/exams/:examId/questions - create question in exam draft
 examRouter.post('/:examId/questions', ...teacherOnly, createQuestion);
-
-// PUT /api/exams/:examId/questions/reorder - reorder questions (placed before :questionId to avoid route collision)
 examRouter.put('/:examId/questions/reorder', ...teacherOnly, reorderQuestions);
-
-// PATCH /api/exams/:examId/questions/:questionId - update single question and options
 examRouter.patch('/:examId/questions/:questionId', ...teacherOnly, updateQuestion);
-
-// DELETE /api/exams/:examId/questions/:questionId - delete single question
 examRouter.delete('/:examId/questions/:questionId', ...teacherOnly, deleteQuestion);
 
 export default examRouter;

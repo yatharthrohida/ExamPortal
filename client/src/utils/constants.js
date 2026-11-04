@@ -1,0 +1,38 @@
+/**
+ * ExamPortal Constants & Enums
+ */
+
+export const USER_ROLES = {
+  STUDENT: 'STUDENT',
+  TEACHER: 'TEACHER',
+  ADMIN: 'ADMIN',
+};
+
+export const EXAM_STATUS = {
+  AVAILABLE: 'AVAILABLE',
+  UPCOMING: 'UPCOMING',
+  COMPLETED: 'COMPLETED',
+  EXPIRED: 'EXPIRED',
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+};
+
+export const SUBMISSION_STATUS = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  SUBMITTED: 'SUBMITTED',
+  AUTO_SUBMITTED: 'AUTO_SUBMITTED',
+  DISQUALIFIED: 'DISQUALIFIED',
+};
+
+export const STORAGE_KEYS = {
+  AUTH_TOKEN: 'examportal_token',
+  AUTH_USER: 'examportal_user',
+  EXAM_SESSION_PREFIX: 'examportal_session_',
+};
+
+export const ANTI_CHEAT_CONFIG = {
+  DEFAULT_MAX_STRIKES: 3,
+  ALERT_REMAINING_SECS_WARNING: 300, // 5 minutes
+  ALERT_REMAINING_SECS_CRITICAL: 60, // 1 minute
+};
+
