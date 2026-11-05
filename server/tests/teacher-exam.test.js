@@ -39,6 +39,7 @@ test('Teacher Exam Management Backend Suite', async (t) => {
   });
 
   t.after(async () => {
+    server.closeAllConnections();
     await new Promise((resolve) => server.close(resolve));
     await closePool();
   });
@@ -170,19 +171,7 @@ test('Teacher Exam Management Backend Suite', async (t) => {
     assert.equal(json.error.code, 'CANNOT_PUBLISH_EMPTY_EXAM');
   });
 
-  await t.test('Auth: POST /api/auth/login succeeds with registered credentials', async () => {
-    // Register teacher first to ensure fresh database compatibility
-    await fetch(`${baseUrl}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: 'Dr. Alan Vance',
-        email: 'alan.vance@university.edu',
-        password: 'password123',
-        role: 'TEACHER'
-      })
-    });
-
+  await t.test('Auth: POST /api/auth/login never issues an unprovisioned demo account token', async () => {
     const res = await fetch(`${baseUrl}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -193,10 +182,9 @@ test('Teacher Exam Management Backend Suite', async (t) => {
       })
     });
 
-    assert.equal(res.status, 200);
+    assert.ok([401, 503].includes(res.status), `Expected fail-closed response, got ${res.status}`);
     const json = await res.json();
-    assert.equal(json.success, true);
-    assert.ok(json.data.token, 'Must return JWT token');
-    assert.equal(json.data.user.role, 'TEACHER');
+    assert.equal(json.success, false);
+    assert.equal(json.data, undefined);
   });
 });

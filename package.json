@@ -1,17 +1,19 @@
 {
-  "name": "exam-portal",
+  "name": "examportal",
   "version": "1.0.0",
   "private": true,
-  "description": "ExamPortal Enterprise Online Examination & Assessment System",
-  "type": "module",
+  "description": "ExamPortal web application and PostgreSQL API",
   "scripts": {
-    "start": "node start-dev.js",
-    "dev": "node start-dev.js",
-    "dev:server": "npm --prefix server run dev",
-    "dev:client": "npm --prefix client run dev",
-    "build": "npm --prefix client run build",
+    "install:server": "npm --prefix server install",
+    "start": "npm --prefix server start",
+    "dev": "npm --prefix server run dev",
+    "migrate": "npm --prefix server run migrate",
+    "migrate:status": "npm --prefix server run migrate:status",
+    "migrate:rollback": "npm --prefix server run migrate:rollback",
     "seed": "npm --prefix server run seed",
     "test": "npm --prefix server test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
-

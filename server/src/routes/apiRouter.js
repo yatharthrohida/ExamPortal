@@ -15,7 +15,11 @@ apiRouter.use('/auth', authRouter);
 // Exam Management Endpoints
 apiRouter.use('/exams', examRouter);
 
+<<<<<<< HEAD
 // Submission & Proctoring Endpoints
+=======
+// Submissions & Student Attempt Endpoints
+>>>>>>> origin/main
 apiRouter.use('/submissions', submissionRouter);
 
 export default apiRouter;
