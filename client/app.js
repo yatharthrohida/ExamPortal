@@ -911,6 +911,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!q) return;
 
+    // Show the marking scheme configured for this specific question.
+    const positiveMarks = document.getElementById('questionPositiveMarks');
+    const negativeMarks = document.getElementById('questionNegativeMarks');
+    const marksValue = Number(q.marks ?? 0);
+    const penaltyValue = Number(q.negativeMarks ?? 0);
+
+    if (positiveMarks) {
+      positiveMarks.textContent = `Marks: +${marksValue.toFixed(2)}`;
+    }
+    if (negativeMarks) {
+      negativeMarks.textContent = penaltyValue > 0
+        ? `Negative: -${penaltyValue.toFixed(2)}`
+        : 'Negative: 0.00';
+    }
+
     runnerQuestionHeading.textContent = `Question ${index + 1} of ${total}`;
     runnerQuestionPrompt.textContent = q.prompt || q.questionText || '';
 
